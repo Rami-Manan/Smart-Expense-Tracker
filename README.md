@@ -1,272 +1,364 @@
-# 💰 Smart Expense Tracker
+# Smart Expense Tracker
 
-A beginner-friendly Python command-line application for recording, organizing, analyzing, and visualizing personal expenses using **Python, NumPy, Pandas, Matplotlib, and Seaborn**.
+A Python-based command-line application that allows users to **record, categorize, manage, filter, analyze, and visualize** their personal expenses. Built as a college engineering project demonstrating core Python concepts, data analysis, and visualization.
 
-> **Project status:** This README is based on the project specification provided. Verify each feature against the implementation and update this document if the code differs.
+---
 
-## 📌 About the Project
+## Table of Contents
 
-The **Smart Expense Tracker** is designed to help users understand where their money goes. It stores transactions in a CSV file, supports filtering and category-based analysis, generates financial summaries, and creates charts that make spending patterns easier to understand.
+1. [Project Overview](#project-overview)
+2. [Objectives](#objectives)
+3. [Features](#features)
+4. [Technologies Used](#technologies-used)
+5. [Project Structure](#project-structure)
+6. [Installation & Setup](#installation--setup)
+7. [How to Run](#how-to-run)
+8. [CSV Dataset Format](#csv-dataset-format)
+9. [ExpenseTracker Class](#expensetracker-class)
+10. [NumPy & Pandas Integration](#numpy--pandas-integration)
+11. [Visualizations](#visualizations)
+12. [Sample Workflow](#sample-workflow)
+13. [Testing](#testing)
+14. [Known Limitations](#known-limitations)
 
-The project demonstrates Python fundamentals, object-oriented programming, data cleaning, numerical analysis, file handling, exception handling, and data visualization.
+---
 
-## ✨ Features
+## Project Overview
 
-The specification calls for these capabilities:
+The **Smart Expense Tracker** is a CLI-based personal finance tool that helps users:
+- Add expenses with validation
+- View and filter expense records
+- Analyze spending by category and month
+- Generate financial reports
+- Visualize spending patterns with charts
 
-- ➕ Add expenses with a date, amount, category, and description.
-- 📋 View transactions stored in the CSV dataset.
-- 🧹 Validate dates, amounts, categories, and missing values.
-- 💾 Preserve transactions in CSV storage across application restarts.
-- 🔎 Filter by category, date range, minimum amount, maximum amount, or combined conditions.
-- 📊 Calculate totals, averages, median, highest and lowest expenses, transaction count, and standard deviation.
-- 🗂️ Analyze category totals, averages, counts, and percentages.
-- 📅 Analyze monthly spending and spending trends.
-- 🧾 Generate a financial report.
-- 📈 Create a category bar chart, spending-trend line graph, category pie chart, and expense histogram.
-- 🛡️ Handle invalid input, missing or empty CSV files, and filters with no matching records.
+All data is stored persistently in a CSV file, and a sample dataset (50–100 records) is generated automatically on first run.
 
-Only describe a feature as complete after confirming it works in the actual code.
+---
 
-## 🧰 Technologies Used
+## Objectives
+
+- Demonstrate Python control structures (`if`, `elif`, `else`, `while`, `for`) and data structures (lists, dictionaries, arrays).
+- Apply **Object-Oriented Programming** with a well-designed `ExpenseTracker` class.
+- Use **NumPy** for numerical calculations (sum, mean, median, std, percentile).
+- Use **Pandas** for data loading, cleaning, filtering, grouping, and aggregation.
+- Create visualizations using **Matplotlib** and **Seaborn**.
+- Handle CSV file I/O, data cleaning, and exceptions gracefully.
+
+---
+
+## Features
+
+| Feature | Description |
+|---|---|
+| **Add Expense** | Input date, amount, category, and description with full validation |
+| **View Expenses** | Display all records in a tabular format |
+| **Expense Summary** | Total, average, median, std dev, max, min, percentiles |
+| **Filter Expenses** | Filter by category, date range, amount range, or combinations |
+| **Category Analysis** | Totals, averages, counts, percentages per category |
+| **Monthly Analysis** | Monthly totals, averages, and transaction counts |
+| **Financial Report** | Complete formatted report with all statistics |
+| **Visualizations** | Bar chart, line graph, pie chart, and histogram |
+| **Data Persistence** | CSV-based storage that persists across sessions |
+| **Input Validation** | Rejects invalid dates, amounts, categories, and empty fields |
+| **Cancel Support** | Type `cancel` at any prompt to abort an operation |
+
+---
+
+## Technologies Used
 
 | Technology | Purpose |
 |---|---|
-| Python 3 | Application logic, validation, control flow, and file handling |
-| NumPy | Numerical calculations on expense amounts |
-| Pandas | CSV loading, data cleaning, filtering, grouping, and aggregation |
-| Matplotlib | Chart creation and figure formatting |
-| Seaborn | Visualization styling and statistical plotting |
-| `unittest` | Automated testing using Python's standard library |
-| CSV | Persistent storage for expense records |
+| **Python 3.10+** | Core programming language |
+| **NumPy** | Numerical calculations (sum, mean, median, std, percentile) |
+| **Pandas** | CSV loading, data cleaning, filtering, grouping, aggregation |
+| **Matplotlib** | Figure creation, axes, titles, layout for charts |
+| **Seaborn** | Styling, color palettes, statistical plots (histogram with KDE) |
+| **unittest** | Automated testing framework (Python standard library) |
+| **csv / datetime / os** | Standard library modules for CSV I/O, date handling, file paths |
 
-## 📁 Project Structure
+---
 
-The planned project structure is:
+## Project Structure
 
 ```text
 smart-expense-tracker/
-├── expense_tracker.py
-├── expenses.csv
-├── requirements.txt
-├── README.md
-├── charts/
-│   └── .gitkeep
+│
+├── expense_tracker.py        # Main application (all logic + CLI menu)
+├── expenses.csv              # Persistent expense dataset (auto-generated)
+├── requirements.txt          # Python dependencies
+├── README.md                 # This file
+│
+├── charts/                   # Generated chart images
+│   ├── .gitkeep
+│   ├── category_expenses.png
+│   ├── monthly_trends.png
+│   ├── category_distribution.png
+│   └── expense_histogram.png
+│
 └── tests/
-    └── test_expense_tracker.py
+    └── test_expense_tracker.py  # Automated unit tests
 ```
 
-- `expense_tracker.py` — main command-line application and `ExpenseTracker` class.
-- `expenses.csv` — expense records stored as CSV.
-- `requirements.txt` — third-party Python dependencies.
-- `charts/` — directory for generated chart images.
-- `tests/test_expense_tracker.py` — automated tests for core functionality.
+---
 
-Adjust this structure if the actual repository differs.
+## Installation & Setup
 
-## 📋 Data Format
+### Prerequisites
 
-The CSV dataset is expected to use these columns:
+- **Python 3.10 or later** installed on your system.
+- **pip** (Python package installer).
 
-```csv
-Date,Amount,Category,Description
-2026-10-01,250.00,Food,Lunch
-2026-10-02,80.00,Transport,Bus fare
-2026-10-03,499.00,Education,Course material
-```
-
-Dates use `YYYY-MM-DD`. Amounts should be positive finite numbers, and each record should have a valid category and non-empty description.
-
-### Suggested expense categories
-
-Food, Transport, Utilities, Entertainment, Healthcare, Education, Shopping, Housing, Travel, and Other.
-
-## ⚙️ Requirements
-
-- Python 3
-- NumPy
-- Pandas
-- Matplotlib
-- Seaborn
-
-Check the source code and dependency file for the exact supported Python and package versions.
-
-## 🚀 Installation
-
-### 1. Clone the repository
-
-Replace the placeholder URL with the actual URL of your repository:
+### Step 1: Navigate to the project directory
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
 cd smart-expense-tracker
 ```
 
-### 2. Create a virtual environment
+### Step 2: Create a virtual environment (recommended)
 
-**Windows PowerShell:**
+**Windows (Command Prompt):**
+```cmd
+python -m venv venv
+venv\Scripts\activate
+```
 
+**Windows (PowerShell):**
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 ```
 
-**Windows Command Prompt:**
-
-```bat
-python -m venv .venv
-.venv\Scripts\activate.bat
+**macOS / Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-**Linux/macOS:**
+### Step 3: Install dependencies
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 3. Install dependencies
-
-```bash
-python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-If `requirements.txt` is not available yet:
+---
 
-```bash
-pip install numpy pandas matplotlib seaborn
-```
-
-## ▶️ Run the Application
-
-From the project directory, run:
+## How to Run
 
 ```bash
 python expense_tracker.py
 ```
 
-The planned interactive menu is:
+The interactive menu will appear:
 
 ```text
-========================================
+=============================================
         SMART EXPENSE TRACKER
-========================================
-
-1. Add New Expense
-2. View All Expenses
-3. View Expense Summary
-4. Filter Expenses
-5. Analyze Expenses by Category
-6. Analyze Monthly Spending
-7. Generate Financial Report
-8. Visualize Expenses
-9. View Available Categories
-10. Exit
+=============================================
+  1. Add New Expense
+  2. View All Expenses
+  3. View Expense Summary
+  4. Filter Expenses
+  5. Analyze Expenses by Category
+  6. Analyze Monthly Spending
+  7. Generate Financial Report
+  8. Visualize Expenses
+  9. View Available Categories
+ 10. Exit
+=============================================
 ```
 
-Choose a menu option and follow the prompts. Ensure the menu documented here matches the final implementation.
+Select an option by entering its number (1–10).
 
-## 📊 Financial Analysis
+---
 
-The application is intended to calculate:
+## CSV Dataset Format
 
-| Metric | Meaning |
-|---|---|
-| Total expenses | Sum of all valid transaction amounts |
-| Average expense | Mean transaction amount |
-| Median expense | Middle amount after sorting transactions |
-| Highest expense | Largest individual transaction |
-| Lowest expense | Smallest individual transaction |
-| Transaction count | Number of valid transactions |
-| Category totals | Total amount spent in each category |
-| Monthly spending | Total amount spent in each month |
-| Category percentage | Category total as a percentage of all spending |
-| Standard deviation | Measure of variation in transaction amounts |
+The `expenses.csv` file uses the following format:
 
-Category percentage can be calculated as:
+```csv
+Date,Amount,Category,Description
+2026-01-10,500.00,Food,Grocery shopping
+2026-01-15,1200.50,Transport,Monthly bus pass
+```
 
-`Category Percentage = (Category Total / Total Expenses) × 100`
+| Column | Type | Format | Description |
+|---|---|---|---|
+| `Date` | String → datetime | `YYYY-MM-DD` | Date of the expense |
+| `Amount` | Float | Positive number | Expense amount in ₹ |
+| `Category` | String | Predefined list | One of 10 categories |
+| `Description` | String | Free text | Brief description |
 
-The implementation should handle empty datasets and avoid division by zero.
+### Supported Categories
 
-## 📈 Visualizations
+Food, Transport, Utilities, Entertainment, Healthcare, Education, Shopping, Housing, Travel, Other
 
-The project specification calls for these charts, saved in the `charts/` directory:
+---
 
-| Chart | Purpose | Suggested output filename |
-|---|---|---|
-| Bar chart | Compare spending across categories | `category_expenses.png` |
-| Line graph | Show spending trends over time | `monthly_trends.png` |
-| Pie chart | Show each category's share of total spending | `category_distribution.png` |
-| Histogram | Show the frequency distribution of expense amounts | `expense_histogram.png` |
+## ExpenseTracker Class
 
-Charts should have descriptive titles and readable labels. The application should handle empty or invalid data without creating misleading plots.
+The `ExpenseTracker` class is the core of the application. It manages all expense operations.
 
-## 🧱 Object-Oriented Design
+### Constructor: `__init__(self, filepath)`
+- Loads the CSV file into a Pandas DataFrame.
+- Generates sample data if the file doesn't exist.
+- Cleans and validates all loaded records.
 
-The planned `ExpenseTracker` class manages expense data and core operations. Its required methods are:
+### Method A: `add_expense(self, date, amount, category, description)`
+- Validates all four fields before saving.
+- Appends the new record to the DataFrame and CSV file.
+- Does **not** overwrite existing records.
 
-- `add_expense(date, amount, category, description)` — validates and saves an expense.
-- `get_summary()` — returns overall and grouped expense statistics.
-- `filter_expenses(condition)` — returns records matching the supplied filters without changing the original dataset.
-- `generate_report()` — displays a readable financial report.
+### Method B: `get_summary(self)`
+- Returns a dictionary with: total, average, median, std dev, count, max, min, percentiles, category totals, monthly spending, top category, and category percentages.
+- Uses **NumPy** for numerical calculations and **Pandas** for grouping.
 
-Document exact behavior and return values according to the final source code.
+### Method C: `filter_expenses(self, condition)`
+- Accepts a dictionary with optional keys: `category`, `start_date`, `end_date`, `min_amount`, `max_amount`.
+- Returns a filtered **copy** of the DataFrame (original is not modified).
 
-## 🧪 Run Tests
+### Method D: `generate_report(self)`
+- Produces a formatted financial report as a string.
+- Includes all statistics, category breakdowns, monthly trends, and highlights.
+- Optionally exports to `financial_report.txt`.
 
-If the project includes the proposed test suite, run it from the project root:
+### Additional Methods
+- `analyze_by_category()` — Category-wise totals, averages, counts, percentages.
+- `analyze_monthly()` — Monthly totals, averages, and counts.
+- `plot_category_bar_chart()` — Bar chart of category spending.
+- `plot_monthly_trends()` — Line graph of monthly trends.
+- `plot_category_pie_chart()` — Pie chart of spending distribution.
+- `plot_expense_histogram()` — Histogram of expense amounts.
+- `generate_all_charts()` — Generate and save all four charts.
+
+---
+
+## NumPy & Pandas Integration
+
+### NumPy Usage
+
+NumPy is used in `get_summary()` for numerical calculations on the amounts array:
+
+```python
+amounts_array = np.array(self.df["Amount"].values, dtype=np.float64)
+
+np.sum(amounts_array)        # Total expenses
+np.mean(amounts_array)       # Average expense
+np.median(amounts_array)     # Median expense
+np.std(amounts_array, ddof=1)  # Standard deviation
+np.max(amounts_array)        # Maximum expense
+np.min(amounts_array)        # Minimum expense
+np.percentile(amounts_array, 25)  # 25th percentile
+np.percentile(amounts_array, 75)  # 75th percentile
+```
+
+### Pandas Usage
+
+Pandas handles all data operations:
+
+- **Loading:** `pd.read_csv()` with encoding and error handling.
+- **Cleaning:** `pd.to_datetime()`, `pd.to_numeric()`, handling NaN/invalid rows.
+- **Filtering:** Boolean indexing with multiple conditions.
+- **Grouping:** `groupby("Category")`, `groupby(Date.dt.to_period("M"))`.
+- **Aggregation:** `.agg(["sum", "mean", "count", "min", "max"])`.
+- **Sorting:** `.sort_values()` by spending totals.
+
+A cross-check ensures NumPy and Pandas totals agree:
+
+```python
+assert abs(pandas_total - numpy_total) < 0.01
+```
+
+---
+
+## Visualizations
+
+All charts are saved to the `charts/` directory and can also be displayed interactively.
+
+### Chart 1: Bar Chart (`category_expenses.png`)
+- **Purpose:** Compare total expenses by category.
+- Sorted by total spending, with value labels on each bar.
+- Uses **Seaborn** `barplot` with the `viridis` palette.
+
+### Chart 2: Line Graph (`monthly_trends.png`)
+- **Purpose:** Show spending trends over time.
+- Aggregated by month, sorted chronologically.
+- Uses **Matplotlib** with markers and fill-between shading.
+
+### Chart 3: Pie Chart (`category_distribution.png`)
+- **Purpose:** Show proportional distribution of spending.
+- Includes percentage labels for each category.
+- Uses **Seaborn** `Set2` color palette.
+
+### Chart 4: Histogram (`expense_histogram.png`)
+- **Purpose:** Show frequency distribution of expense amounts.
+- Uses **Seaborn** `histplot` with KDE (kernel density estimation).
+- 20 bins with edge coloring for clarity.
+
+---
+
+## Sample Workflow
+
+1. **Run the application:** `python expense_tracker.py`
+2. **Add an expense (Option 1):**
+   ```
+   Date: 2026-10-27
+   Amount: 450
+   Category: Food
+   Description: Weekly groceries
+   ```
+3. **View summary (Option 3):** See total, average, category breakdown.
+4. **Filter expenses (Option 4):** Enter `Food` as category to see food expenses.
+5. **Generate report (Option 7):** Get a complete financial summary.
+6. **Visualize (Option 8):** Generate all four charts in `charts/`.
+7. **Exit (Option 10):** Close the application.
+
+---
+
+## Testing
+
+### Run all tests
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-Tests should use temporary files or directories so they do not unintentionally change the real `expenses.csv` file. Do not claim that tests pass unless they have actually been run successfully.
+Or run the test file directly:
 
-## 🔒 Data Safety and Validation
+```bash
+python -m pytest tests/test_expense_tracker.py -v
+```
 
-The application should:
+### What is tested
 
-- Reject invalid dates and non-positive, `NaN`, or infinite amounts.
-- Prevent incomplete or invalid transactions from being saved.
-- Preserve existing records when starting the program.
-- Avoid replacing valid data with sample data.
-- Report malformed rows and data-cleaning problems clearly.
-- Handle missing files and empty datasets gracefully.
+- ✅ Valid and invalid expense addition
+- ✅ Date, amount, and category validation
+- ✅ Expense summary calculations (total, average, max, min, median, std dev)
+- ✅ Category filtering
+- ✅ Date-range filtering
+- ✅ Amount-range filtering
+- ✅ Empty dataset behavior
+- ✅ Missing CSV file handling
+- ✅ Malformed CSV data cleaning
+- ✅ CSV persistence after adding expenses
+- ✅ NumPy calculation accuracy
+- ✅ Chart generation
 
-Keep a backup of important financial data before making manual changes to the CSV file.
-
-## 🛣️ Possible Future Improvements
-
-- Monthly budgets and budget-limit warnings.
-- Exportable PDF or spreadsheet reports.
-- Recurring expense support.
-- Search by description.
-- Import and export tools.
-- Multi-currency support.
-- A graphical interface, if the project scope later permits one.
-
-These are suggestions, not claims about existing functionality.
-
-## 🤝 Contributing
-
-1. Fork the repository.
-2. Create a branch for your change.
-3. Make your changes and add or update tests.
-4. Run the tests locally.
-5. Open a pull request describing the changes.
-
-## 📄 License
-
-Add the license used by this project before distributing it. If the repository does not contain a `LICENSE` file, no specific open-source license is implied by this README.
-
-## 👨‍💻 Author
-
-**GitHub:** [Rami-Manan](https://github.com/Rami-Manan)
+Tests use **temporary directories** so the actual `expenses.csv` is never modified.
 
 ---
 
-⭐ If you find this project useful for learning Python data analysis, consider starring the repository.
+## Known Limitations
 
-**Note:** Keep this README synchronized with the actual source code. Remove or revise any feature description that is not implemented.
+1. **Single-user application** — no authentication or multi-user support.
+2. **CLI-only** — no graphical user interface (by design, per project requirements).
+3. **No database** — uses CSV for persistence (by design, per project requirements).
+4. **Currency** — amounts displayed in ₹ (Indian Rupees); no multi-currency support.
+5. **Interactive chart display** requires a GUI-capable environment (e.g., VS Code terminal with display access). Charts are always saved as PNG files regardless.
+6. **No undo/delete** — individual expense deletion is not implemented in this version.
+
+---
+
+## License
+
+This project is developed for academic/educational purposes.
