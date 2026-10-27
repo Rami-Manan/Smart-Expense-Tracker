@@ -1,91 +1,85 @@
 # 💰 Smart Expense Tracker
 
-A Python command-line project for recording, organizing, analyzing, and visualizing personal expenses with **Pandas, NumPy, Matplotlib, and Seaborn**.
+A Python command-line application for recording, organizing, analyzing, and visualizing personal expenses using **Pandas, NumPy, Matplotlib, and Seaborn**. It stores transactions in CSV files and includes category-wise monthly budgets with overspending alerts.
 
-> **Accuracy note:** This README is based on the project description supplied for this repository. Confirm each command and feature against the current source code before publishing claims about implementation or test results.
+[Repository](https://github.com/Rami-Manan/Smart-Expense-Tracker) · [Author](https://github.com/Rami-Manan)
 
 ## Table of Contents
 
-- [About the Project](#-about-the-project)
-- [Project Goals](#-project-goals)
-- [Planned Feature Set](#-planned-feature-set)
+- [Overview](#-overview)
+- [Features](#-features)
 - [Technology Stack](#-technology-stack)
 - [Project Structure](#-project-structure)
 - [Data Format](#-data-format)
-- [Getting Started](#-getting-started)
-- [Running the Application](#-running-the-application)
-- [Analysis and Visualizations](#-analysis-and-visualizations)
+- [Installation](#-installation)
+- [Run the Application](#-run-the-application)
+- [Monthly Budgets](#-monthly-budgets)
+- [Analysis and Charts](#-analysis-and-charts)
 - [Testing](#-testing)
-- [Data Validation and Safety](#-data-validation-and-safety)
-- [Limitations and Future Improvements](#-limitations-and-future-improvements)
+- [Data Safety and Limitations](#-data-safety-and-limitations)
+- [Future Improvements](#-future-improvements)
 - [Contributing](#-contributing)
 - [License](#-license)
-- [Author](#-author)
 
-## 📌 About the Project
+## 📌 Overview
 
-**Smart Expense Tracker** is intended to help users understand where their money goes. The project uses a CSV file for expense records and applies Python data-analysis and visualization libraries to summarize spending patterns.
+Smart Expense Tracker is a CLI-based personal finance and data-analysis project. It helps users keep expense records, filter transactions, examine spending patterns, generate a readable report, create charts, and compare monthly category spending against a budget.
 
-It is also a practical learning project for Python fundamentals, file handling, input validation, object-oriented programming, data cleaning, numerical analysis, and visualization.
+The repository includes a demonstration `expenses.csv` dataset with 75 sample transactions. Use your own records only in a local copy and do not commit private financial information.
 
-## 🎯 Project Goals
+## ✨ Features
 
-- Organize expense records in a consistent format.
-- Summarize spending and compare expense categories.
-- Explore spending patterns over time.
-- Present numerical results with readable charts.
-- Demonstrate practical use of Python's data-analysis ecosystem.
-
-## ✨ Planned Feature Set
-
-The project specification describes the following capabilities. **Verify each item against the current code before treating it as implemented.**
-
-- Add and view expenses.
-- Validate dates, amounts, categories, and required fields.
-- Store expense records in CSV format between application runs.
-- Filter transactions by category, date range, and amount.
-- Calculate totals, averages, median, highest and lowest expenses, transaction count, and standard deviation.
-- Summarize spending by category and month.
-- Generate a financial summary report.
-- Create category and time-trend charts, a category-distribution chart, and an expense histogram.
-- Handle invalid input, missing or empty CSV files, and filters with no matching records.
+- **Expense records:** add and view expenses with date, amount, category, and description.
+- **Input validation:** reject invalid dates, non-positive or non-finite amounts, unsupported categories, and empty descriptions.
+- **CSV persistence:** load saved records and save new transactions; CSV writes use a temporary file and replace the target only after the write succeeds.
+- **Data cleaning:** identify and exclude rows with invalid dates, amounts, categories, or descriptions when loading.
+- **Filtering:** combine category, date range, minimum amount, and maximum amount conditions. Invalid filters return no matches instead of silently broadening the results.
+- **Overall analysis:** calculate total, mean, median, standard deviation, maximum, minimum, percentiles, and transaction count.
+- **Category analysis:** calculate totals, average, count, minimum, maximum, and percentage by category.
+- **Monthly analysis:** summarize expense totals, averages, counts, minima, and maxima by month.
+- **Financial report:** print a formatted report and save it as `financial_report.txt` from the CLI.
+- **Visualizations:** save category bar, monthly trend line, category pie, and expense histogram charts under `charts/`.
+- **Monthly budgets:** set a budget for a category and month, review spending against it, and receive an alert when a new expense pushes a category over budget.
+- **Automated tests:** standard-library `unittest` tests use temporary directories for their expense and budget records.
+- **Continuous integration:** the included GitHub Actions workflow is configured to run the test suite on pushes and pull requests.
 
 ## 🧰 Technology Stack
 
-| Technology | Intended role |
+| Technology | Role |
 |---|---|
-| Python 3 | Application logic, input handling, validation, and file operations |
-| Pandas | CSV handling, data cleaning, filtering, grouping, and aggregation |
-| NumPy | Numerical calculations |
-| Matplotlib | Chart creation and formatting |
-| Seaborn | Statistical visualization and chart styling |
-| CSV | Persistent storage for expense records |
-| `unittest` | Standard-library testing, if included in the project |
-
-Keep this list synchronized with the imports and dependency file in the repository.
+| Python 3.10+ | Application logic, validation, CLI, and file operations |
+| NumPy | Numerical calculations and summary statistics |
+| Pandas | CSV loading, validation, filtering, grouping, and aggregation |
+| Matplotlib | Chart generation and formatting |
+| Seaborn | Chart styling and histogram plotting |
+| `unittest` | Automated tests from Python's standard library |
+| CSV | Persistent expense and budget storage |
+| GitHub Actions | Automated test execution on pushes and pull requests |
 
 ## 📁 Project Structure
 
-The following is a **proposed structure**, not a verified inventory of the current repository:
-
 ```text
 Smart-Expense-Tracker/
-├── expense_tracker.py
-├── expenses.csv
-├── requirements.txt
-├── README.md
-├── .gitignore
+├── .github/
+│   └── workflows/
+│       └── tests.yml
 ├── charts/
 │   └── .gitkeep
-└── tests/
-    └── test_expense_tracker.py
+├── tests/
+│   └── test_expense_tracker.py
+├── .gitignore
+├── LICENSE
+├── README.md
+├── expense_tracker.py
+├── expenses.csv
+└── requirements.txt
 ```
 
-Update this tree to match the files that actually exist. Do not commit private expense records or generated files unnecessarily.
+Runtime files are created when needed: `budgets.csv` stores category/month budgets, `financial_report.txt` stores the report generated from menu option 7, and PNG charts are written to `charts/`. Those outputs are excluded by `.gitignore`.
 
 ## 📋 Data Format
 
-If the application uses the described CSV schema, a record may look like this:
+The expense file uses these columns:
 
 ```csv
 Date,Amount,Category,Description
@@ -94,22 +88,17 @@ Date,Amount,Category,Description
 2026-10-03,499.00,Education,Course material
 ```
 
-The proposed format uses:
+Dates use `YYYY-MM-DD`. Expense amounts must be positive, finite numbers. Categories are case-insensitive on input and normalized to one of these supported values:
 
-- `Date` — date of the transaction, ideally in `YYYY-MM-DD` format.
-- `Amount` — expense amount, expected to be a positive finite number.
-- `Category` — expense category.
-- `Description` — short explanation of the transaction.
+`Food`, `Transport`, `Utilities`, `Entertainment`, `Healthcare`, `Education`, `Shopping`, `Housing`, `Travel`, `Other`.
 
-Confirm the column names and validation rules in the source code before relying on this example.
-
-## ⚙️ Getting Started
+## 🚀 Installation
 
 ### Prerequisites
 
-- Python 3 installed and available from your terminal.
+- Python 3.10 or newer.
+- `pip`.
 - Git, if cloning the repository.
-- The Python packages listed in `requirements.txt`.
 
 ### 1. Clone the repository
 
@@ -118,7 +107,7 @@ git clone https://github.com/Rami-Manan/Smart-Expense-Tracker.git
 cd Smart-Expense-Tracker
 ```
 
-### 2. Create and activate a virtual environment
+### 2. Create a virtual environment
 
 **Windows PowerShell**
 
@@ -143,134 +132,126 @@ source .venv/bin/activate
 
 ### 3. Install dependencies
 
-If the repository includes `requirements.txt`:
-
 ```bash
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-If there is no dependency file, install only the packages actually required by the source code. The project description lists:
+The dependency file lists NumPy, Pandas, Matplotlib, and Seaborn. `unittest` is included with Python and does not require a separate package.
 
-```bash
-python -m pip install numpy pandas matplotlib seaborn
-```
+## ▶️ Run the Application
 
-## ▶️ Running the Application
-
-If the main script is named `expense_tracker.py`, run:
+From the project root, run:
 
 ```bash
 python expense_tracker.py
 ```
 
-Confirm the actual script name and available menu options in the repository before using this command in documentation.
+The main menu contains these options:
+
+```text
+ 1. Add New Expense
+ 2. View All Expenses
+ 3. View Expense Summary
+ 4. Filter Expenses
+ 5. Analyze Expenses by Category
+ 6. Analyze Monthly Spending
+ 7. Generate Financial Report
+ 8. Visualize Expenses
+ 9. View Available Categories
+10. Manage Monthly Budgets
+11. Exit
+```
 
 ### Example workflow
 
-A typical expense-tracking workflow would be:
+1. Choose **1** and enter a date, amount, category, and description. Type `cancel` at an add-expense prompt to abort that operation.
+2. Choose **3** to inspect summary statistics or **4** to filter records.
+3. Choose **5** or **6** to review category or monthly summaries.
+4. Choose **7** to print a financial report and save it as `financial_report.txt`.
+5. Choose **8** to generate chart images in `charts/`.
+6. Choose **10** to set a category budget or review a month's budget status.
 
-1. Start the application.
-2. Add an expense with its date, amount, category, and description.
-3. Review saved transactions.
-4. Run the available summary or filtering operations.
-5. Generate visualizations, if supported by the current implementation.
-6. Exit and restart the application to check whether records persist.
+On first run, if `expenses.csv` is missing, the application generates a 75-record sample dataset. If the CSV exists but is zero bytes, it initializes only the header and does **not** invent sample transactions.
 
-The exact menu and workflow depend on the implemented code.
+## 💸 Monthly Budgets
 
-## 📊 Analysis and Visualizations
+Select **10. Manage Monthly Budgets**, enter a month as `YYYY-MM`, then choose whether to set/update a category budget or view the budget status.
 
-The project description identifies these potential analysis metrics:
+Each budget is stored by month and category in `budgets.csv`. The status view includes the budget, amount spent, remaining amount, and one of these labels:
 
-| Metric | Meaning |
-|---|---|
-| Total expenses | Sum of valid transaction amounts |
-| Average expense | Mean transaction amount |
-| Median expense | Middle value after ordering transaction amounts |
-| Highest / lowest expense | Largest and smallest transaction amounts |
-| Transaction count | Number of included records |
-| Category totals | Total spending grouped by category |
-| Monthly spending | Total spending grouped by month |
-| Category percentage | Category total as a share of total spending |
-| Standard deviation | Measure of variation in transaction amounts |
+- `On track` — spending is below 80% of the budget.
+- `Near limit` — spending has reached at least 80% but remains below the limit.
+- `At limit` — spending equals the limit.
+- `Over budget` — spending is above the limit.
 
-Category share can be calculated as:
+When adding an expense takes a category over its monthly limit, the CLI prints a budget alert. Budget records are kept in a separate file from expense records.
 
-```text
-Category Percentage = (Category Total / Total Expenses) × 100
-```
+## 📊 Analysis and Charts
 
-The implementation should handle empty data and avoid division by zero.
+### Summary statistics
 
-The described visualization ideas are:
+The expense summary includes total, average, median, sample standard deviation, count, highest and lowest individual expenses, the 25th and 75th percentiles, category totals and percentages, monthly totals, and the top spending category. Empty datasets return zero-valued summary metrics without division by zero.
 
-| Chart | Purpose | Suggested filename |
+### Chart outputs
+
+| Chart | Purpose | Output path |
 |---|---|---|
-| Category bar chart | Compare spending between categories | `category_expenses.png` |
-| Monthly trend line | Show spending over time | `monthly_trends.png` |
-| Category pie chart | Show each category's share | `category_distribution.png` |
-| Expense histogram | Show the distribution of transaction amounts | `expense_histogram.png` |
+| Category bar chart | Compare totals by category | `charts/category_expenses.png` |
+| Monthly trend line | Compare total spending across months | `charts/monthly_trends.png` |
+| Category pie chart | Show category shares of total spending | `charts/category_distribution.png` |
+| Expense histogram | Show the distribution of transaction amounts | `charts/expense_histogram.png` |
 
-These filenames are suggestions until verified against the actual code.
+The chart methods save files. Interactive chart display depends on whether the runtime has a working graphical environment.
 
 ## 🧪 Testing
 
-If the repository includes tests under `tests/`, run them from the project root with:
+Run the test suite from the repository root:
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-Do not report that tests pass unless the command has been executed successfully. Tests should use temporary files or isolated sample data so they do not modify real expense records.
+Tests use temporary directories so that the committed sample `expenses.csv` is not modified. Coverage includes date/month/amount/category validation, add-and-reload persistence, malformed CSV rows, empty datasets, filtering, summary calculations, category/month analysis, chart generation, monthly-budget persistence, and budget alerts.
 
-## 🛡️ Data Validation and Safety
+The included GitHub Actions workflow is configured to run the same test command on pushes and pull requests using Python 3.11. The workflow will run in GitHub after the files are pushed.
 
-For a reliable expense tracker, validation should address:
+## 🛡️ Data Safety and Limitations
 
-- Invalid dates and malformed CSV rows.
-- Missing required fields.
-- Zero, negative, `NaN`, or infinite amounts, where these are not allowed.
-- Missing files and empty datasets.
-- Filters that return no matching transactions.
-- Safe persistence without accidentally replacing existing records.
+- This is a local, single-user CLI app. It has no authentication, cloud sync, or database.
+- It uses CSV files and supports Indian Rupees (₹); multi-currency conversion is not implemented.
+- Individual expense editing and deletion are not implemented.
+- Loading malformed CSV data can exclude invalid rows from the in-memory dataset. Review warnings and keep a backup before working with important records.
+- The application generates a sample dataset if `expenses.csv` is missing. Keep a backup of valuable data and make sure the file path is correct before first run.
+- Do not commit real personal expense details, `budgets.csv`, generated reports, environment files, API keys, or passwords.
 
-Back up important CSV data before editing it manually. Avoid committing real personal financial data, credentials, API keys, or tokens.
+## 🛣️ Future Improvements
 
-## 🛣️ Limitations and Future Improvements
+- Add edit/delete operations with confirmation and regression tests.
+- Export reports as PDF or Excel.
+- Add recurring transaction support and description search.
+- Add optional currency selection without assuming an exchange rate.
+- Capture screenshots from a live app run for the repository presentation.
 
-Possible future enhancements include:
-
-- Monthly budgets and overspending alerts.
-- Exportable PDF or spreadsheet reports.
-- Recurring expense support.
-- Search by description.
-- Data import and export tools.
-- Multi-currency support.
-- A graphical interface, if it fits the project's goals.
-
-These are ideas for future work, not claims about current functionality.
+These are potential extensions, not current features.
 
 ## 🤝 Contributing
 
-Contributions are welcome.
-
 1. Fork the repository.
 2. Create a branch for your change.
-3. Make your changes and add or update tests.
-4. Run the relevant tests.
-5. Open a pull request explaining the change.
+3. Implement the change and add/update tests.
+4. Run `python -m unittest discover -s tests -v`.
+5. Open a pull request describing the change and verification performed.
 
 ## 📄 License
 
-This repository should retain and follow the license present in its `LICENSE` file. If no license file exists, add the intended license before claiming that the project is distributed under it.
+This project is released under the [MIT License](LICENSE).
 
 ## 👨‍💻 Author
 
-**GitHub:** [Rami-Manan](https://github.com/Rami-Manan)
-
-**Repository:** [Smart Expense Tracker](https://github.com/Rami-Manan/Smart-Expense-Tracker)
+**GitHub:** [Rami-Manan](https://github.com/Rami-Manan)  
+**Project repository:** [Smart Expense Tracker](https://github.com/Rami-Manan/Smart-Expense-Tracker)
 
 ---
 
-⭐ If you find this project useful for learning Python data analysis, consider starring the repository.
+⭐ If this project helps you learn Python and data analysis, consider starring the repository.
